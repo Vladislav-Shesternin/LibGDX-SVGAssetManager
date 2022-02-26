@@ -6,5 +6,6 @@ data class SVGTextureData(
     val path: String,
     val width: Int,
     val height: Int,
-    var texture: Texture? = null
-)
+) {
+    lateinit var texture: Texture
+}

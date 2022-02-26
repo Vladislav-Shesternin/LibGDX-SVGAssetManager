@@ -23,7 +23,7 @@ class LibGDXGame : ApplicationAdapter() {
 
 
     override fun create() {
-        SVGAssetManager.loadList = listOf(*SVGAssetManager.EnumSVG.values())
+        SVGAssetManager.loadListSVG = listOf(SVGAssetManager.EnumSVG.A.svg) + SVGAssetManager.EnumSVGList.LIST.svgList
         loadAssets()
     }
 

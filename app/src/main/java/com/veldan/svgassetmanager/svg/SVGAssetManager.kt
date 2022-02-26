@@ -19,12 +19,7 @@ object SVGAssetManager : Disposable {
     private val coroutineProgress = CoroutineScope(Dispatchers.Main)
     private val mutex = Mutex()
 
-    var loadList = listOf<EnumSVG>()
-
-
-    enum class EnumSVG(val svg: SVGTextureData) {
-        A(SVGTextureData("a.svg", 500, 500)),
-    }
+    var loadListSVG = listOf<SVGTextureData>()
 
 
 
@@ -54,7 +49,7 @@ object SVGAssetManager : Disposable {
         loaded: () -> Unit = { }
     ) = CompletableDeferred<Boolean>().also { continuation ->
 
-        if (loadList.isEmpty()) throw Exception("loadList isEmpty = true")
+        if (loadListSVG.isEmpty()) throw Exception("loadList isEmpty = true")
 
         val progressFlow = MutableStateFlow(0f)
         coroutineProgress.launch {
@@ -63,12 +58,12 @@ object SVGAssetManager : Disposable {
             }
         }
 
-        val onePercentProgress = 100f / loadList.size
+        val onePercentProgress = 100f / loadListSVG.size
         val listJob = mutableListOf<Job>()
 
-        loadList.onEach { enumSvg ->
+        loadListSVG.onEach { svg ->
             coroutineLoad.launch {
-                enumSvg.svg.generateTexture()
+                svg.generateTexture()
                 mutex.withLock { progressFlow.value += onePercentProgress }
             }.apply { listJob.add(this) }
         }
@@ -77,5 +72,15 @@ object SVGAssetManager : Disposable {
         loaded()
         continuation.complete(true)
     }.await()
+
+
+
+    enum class EnumSVG(val svg: SVGTextureData) {
+        A(SVGTextureData("a.svg", 500, 500)),
+    }
+
+    enum class EnumSVGList(val svgList: List<SVGTextureData>) {
+        LIST(List(3) { SVGTextureData("list/${it.inc()}.svg", 500,  500) })
+    }
 
 }
