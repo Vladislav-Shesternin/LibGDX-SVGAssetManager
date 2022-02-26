@@ -22,8 +22,8 @@ object SVGAssetManager : Disposable {
     var loadList = listOf<EnumSVG>()
 
 
-    enum class EnumSVG(val svg: SVGTexture) {
-        A(SVGTexture("a.svg", 500, 500)),
+    enum class EnumSVG(val svg: SVGTextureData) {
+        A(SVGTextureData("a.svg", 500, 500)),
     }
 
 
@@ -37,7 +37,7 @@ object SVGAssetManager : Disposable {
 
     private fun getAssetString(path: String) = activityContext.assets.open(path).bufferedReader().use { it.readText() }
 
-    private suspend fun SVGTexture.generateTexture() = CompletableDeferred<Boolean>().also { continuation ->
+    private suspend fun SVGTextureData.generateTexture() = CompletableDeferred<Boolean>().also { continuation ->
         val bitmap = SVGHelper.noContext().open(getAssetString(path)).setRequestBounds(width, height).bitmap
         Gdx.app.postRunnable {
             texture = Texture(bitmap.width, bitmap.height, Pixmap.Format.RGBA8888)
